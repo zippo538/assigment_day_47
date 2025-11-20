@@ -150,7 +150,7 @@ try :
                 person_total = sum(items) + tip_per_person
                 summary.append({"Orang": person, "Total Item": sum(items), "Tip": tip_per_person, "Total Bayar": person_total})
 
-            st.dataframe(pd.DataFrame(summary))
+            st.dataframe(pd.DataFrame(summary,use_container_width = True,hide_index=True))
 
         
         
