@@ -17,6 +17,6 @@
 ## Hasil analisa
 Penggunaan LLM gemini untuk OCR, mudah dioperasikan jika dibandingkan dengan menggunakan donut atau model OCR lainnya. Namun memiliki keterbasan token. Untuk keakuratan menggunakan model ini sangat baik untuk mendeteksi item, jumlah, dan harga.
 
-<<by Mahindra>>
+<by Mahindra>
 
 
