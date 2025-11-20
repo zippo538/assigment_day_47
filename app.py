@@ -117,22 +117,43 @@ try :
             st.dataframe(df,use_container_width = True,hide_index=True)
         
         
+        people_input = st.text_input("Masukkan nama orang (dipisah koma, contoh: Alice, Bob, Charlie):")
+        people = [name.strip() for name in people_input.split(',') if name.strip()]
         
-        num_people = st.number_input("Masukkan Jumlah orang",min_value=1,step=1)
+        if people :
+            st.markdown("### Split bill item ")
+            assignments= {}
+            for person in people :
+                assignments[person] = []
+            
+            num_cols = 2
+            cols = st.columns(num_cols) 
+            
+            for i, item in enumerate(data['menus']):
+                col = cols[i % num_cols]
+                with col : 
+                    st.write(f"**{item['name']} - Rp.{item['price']:.2f} ({item['count']})**")
+                    assigned_person = st.selectbox(f"Assign ke orang untuk {item['name']}:", ["Tidak assign"] + people, key=f"assign_{item['name']}")
+                    if assigned_person != "Tidak assign":
+                        assignments[assigned_person].append(item['price'])
+        
+            # Input persentase tip (opsional)
+            tip_percentage = st.slider("Persentase tip (%):", min_value=0, max_value=100, value=0)
 
-        tip_percentage = st.slider("Persentase tip (%)", min_value=0, max_value=100, value =0)
+            # Hitung total per orang
+            tip_total = total_bil * (tip_percentage / 100)
+            tip_per_person = tip_total / len(people) if people else 0
 
-        #hitung total dengan tip 
-        tip_amount = total_bil * (tip_percentage /100)
-        total_with_tip = total_bil + tip_amount
+            st.markdown("### Ringkasan Pembagian")
+            summary = []
+            for person, items in assignments.items():
+                person_total = sum(items) + tip_per_person
+                summary.append({"Orang": person, "Total Item": sum(items), "Tip": tip_per_person, "Total Bayar": person_total})
 
-        if num_people > 0: 
-            split_amount = total_with_tip / num_people 
-            st.markdown(f"#### Total tagihan dengan tip : Rp.{total_with_tip:.2f}")
-            st.markdown(f"#### Setiap orang yang membayar : Rp.{split_amount:.2f}")
+            st.dataframe(pd.DataFrame(summary))
 
-        else : 
-            st.markdown("#### Masukkan jumlah orang yang valid")
+        
+        
 except Exception as e: 
     st.error(f"File Error Uploded : {str(e)}")
 
